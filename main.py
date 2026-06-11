@@ -11,7 +11,7 @@ names = [line.split(':')[1].strip() for line in profiles.split('\n') if 'All Use
 for i, n in enumerate(names, 1):
     print(f'>>> [{i}] - {n}')
 
-ch = int(input('\n Choose WIFI number: '))
+ch = int(input('\nChoose WIFI number: '))
 
 wifi = names[ch - 1]
 
