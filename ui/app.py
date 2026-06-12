@@ -72,6 +72,33 @@ class WifiPasswordViewer(tk.Tk):
         )
         right_header.pack(fill="x")
 
+        # -- Nuevo: fila de controles para contraseña (mostrar/ocultar y copiar)
+        pw_controls = tk.Frame(right_panel, bg="white")
+        pw_controls.pack(fill="x", padx=10, pady=(8, 4))
+
+        pw_label = tk.Label(pw_controls, text="Contraseña:", bg="white", font=("Arial", 10, "bold"))
+        pw_label.pack(side="left")
+
+        # Variable para la contraseña actual y flag de visibilidad
+        self.current_password = ""
+        self.pw_var = tk.StringVar(value="")
+        self.show_password = tk.BooleanVar(value=False)
+
+        # Entry para mostrar la contraseña (readonly)
+        # Inicialmente ocultada (mostrar='*') y readonly
+        self.pw_entry = tk.Entry(pw_controls, textvariable=self.pw_var, font=("Arial", 11), bd=1, show='*')
+        self.pw_entry.configure(state='readonly')
+        self.pw_entry.pack(side="left", padx=(8, 6), fill="x", expand=True)
+
+        # Botón copiar contraseña
+        self.copy_btn = tk.Button(pw_controls, text="Copiar contraseña", command=self.copy_password, state='disabled')
+        self.copy_btn.pack(side="left", padx=(6, 0))
+
+        # Toggle mostrar/ocultar (Checkbutton)
+        self.show_chk = tk.Checkbutton(pw_controls, text="Mostrar", variable=self.show_password, command=self.update_password_display, bg="white")
+        self.show_chk.pack(side="left", padx=(6, 0))
+
+        # Contenedor para detalles (salida completa)
         details_container = tk.Frame(right_panel, bg="white")
         details_container.pack(fill="both", expand=True, padx=10, pady=10)
 
@@ -113,6 +140,33 @@ class WifiPasswordViewer(tk.Tk):
 
         # Cargar perfiles al iniciar
         self.load_profiles()
+
+    def update_password_display(self):
+        """Actualiza la visualización del campo de contraseña según el toggle."""
+        # Cambia la máscara del entry según show_password
+        if self.show_password.get():
+            # Mostrar texto claro
+            self.pw_entry.configure(show='')
+        else:
+            # Ocultar con asteriscos
+            self.pw_entry.configure(show='*')
+
+        # Actualizar el valor (aunque el StringVar ya tiene el valor)
+        self.pw_var.set(self.current_password if self.show_password.get() else self.current_password)
+
+    def copy_password(self):
+        """Copia la contraseña actual al portapapeles (si existe)."""
+        if not self.current_password:
+            messagebox.showinfo("Copiar", "No hay ninguna contraseña para copiar.")
+            return
+
+        try:
+            # Usar clipboard del root
+            self.clipboard_clear()
+            self.clipboard_append(self.current_password)
+            messagebox.showinfo("Copiar", "Contraseña copiada al portapapeles.")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo copiar la contraseña: {e}")
 
     def load_profiles(self):
         """Ejecuta el comando para listar perfiles y rellena el listbox."""
@@ -187,15 +241,23 @@ class WifiPasswordViewer(tk.Tk):
                     except Exception:
                         continue
 
-        # Mostrar resultado completo y, si existe, la contraseña resaltada
+        # Actualizar campo de contraseña (se muestra en el entry dedicado)
+        if password:
+            self.current_password = password[0]
+            self.pw_var.set(self.current_password if self.show_password.get() else self.current_password)
+            self.copy_btn.configure(state='normal')
+        else:
+            self.current_password = ""
+            self.pw_var.set("")
+            self.copy_btn.configure(state='disabled')
+
+        # Mostrar resultado completo en el Text (sin repetir la línea de contraseña)
         self.details_text.delete("1.0", tk.END)
         display_text = f"Red seleccionada: {ssid}\n\n"
         display_text += "Detalles (salida completa del comando):\n"
         display_text += result + "\n\n"
 
-        if password:
-            display_text += f"Contraseña: {password[0]}\n"
-        else:
+        if not password:
             display_text += "Contraseña: No encontrada en la salida (verifique permisos o localización del sistema).\n"
 
         self.details_text.insert(tk.END, display_text)
