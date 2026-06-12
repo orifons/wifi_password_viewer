@@ -95,7 +95,13 @@ class WifiPasswordViewer(tk.Tk):
         self.copy_btn.pack(side="left", padx=(6, 0))
 
         # Toggle mostrar/ocultar (Checkbutton)
-        self.show_chk = tk.Checkbutton(pw_controls, text="Mostrar", variable=self.show_password, command=self.update_password_display, bg="white")
+        self.show_chk = tk.Checkbutton(
+            pw_controls,
+            text="Mostrar",
+            variable=self.show_password,
+            command=self.update_password_display,
+            bg="white"
+        )
         self.show_chk.pack(side="left", padx=(6, 0))
 
         # Contenedor para detalles (salida completa)
