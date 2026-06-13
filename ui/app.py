@@ -194,7 +194,7 @@ class WifiPasswordViewer(tk.Tk):
                 if ':' in line:
                     try:
                         names.append(line.split(':', 1)[1].strip())
-                    except Exception:
+                    except SystemError:
                         continue
 
         # Fallback: si no se encontraron con las palabras claves, intentar extraer cualquier línea con ':' que
@@ -204,7 +204,7 @@ class WifiPasswordViewer(tk.Tk):
                 if ':' in line and ('Profile' in line or 'Perfil' in line):
                     try:
                         names.append(line.split(':', 1)[1].strip())
-                    except Exception:
+                    except SystemError:
                         continue
 
         # Actualizar listbox
@@ -244,7 +244,7 @@ class WifiPasswordViewer(tk.Tk):
                 if ':' in line:
                     try:
                         password.append(line.split(':', 1)[1].strip())
-                    except Exception:
+                    except SystemError:
                         continue
 
         # Actualizar campo de contraseña (se muestra en el entry dedicado)
