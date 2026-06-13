@@ -9,7 +9,7 @@ class WifiPasswordViewer(tk.Tk):
         self.title("Wi‑Fi Password Viewer")
         self.geometry("950x650")
         self.minsize(850, 550)
-        self.configure(bg="#0a0a0f")  # deep dark background
+        self.configure(bg="#0a0a0f")
 
         # ---------- Custom Fonts ----------
         self.title_font = ("Segoe UI", 14, "bold")
@@ -21,26 +21,22 @@ class WifiPasswordViewer(tk.Tk):
         style = ttk.Style(self)
         style.theme_use("clam")
 
-        # Color palette
         bg_dark = "#0a0a0f"
         card_bg = "#1e1e2a"
-        accent = "#6366f1"  # indigo
+        accent = "#6366f1"
         accent_hover = "#818cf8"
         text_primary = "#f1f5f9"
         text_secondary = "#94a3b8"
         border = "#334155"
 
-        # Global styles
         style.configure("TFrame", background=bg_dark)
         style.configure("TLabel", background=bg_dark, foreground=text_primary, font=self.body_font)
 
-        # Card style (LabelFrame)
         style.configure("Card.TLabelframe", background=card_bg, foreground=text_primary,
                         borderwidth=0, relief="flat")
         style.configure("Card.TLabelframe.Label", background=card_bg, foreground=accent,
                         font=self.heading_font, padding=(10, 5, 0, 0))
 
-        # Buttons
         style.configure("Accent.TButton", background=accent, foreground="white",
                         borderwidth=0, focusthickness=0, padding=(12, 6), font=self.small_font)
         style.map("Accent.TButton",
@@ -53,7 +49,6 @@ class WifiPasswordViewer(tk.Tk):
                   background=[("active", "#2d2d3a")],
                   foreground=[("active", text_primary)])
 
-        # Treeview (Wi-Fi list)
         style.configure("Modern.Treeview", background=card_bg, foreground=text_primary,
                         fieldbackground=card_bg, borderwidth=0, font=self.body_font,
                         rowheight=32)
@@ -61,23 +56,21 @@ class WifiPasswordViewer(tk.Tk):
                         font=self.heading_font, borderwidth=0, relief="flat")
         style.map("Modern.Treeview.Heading", background=[("active", "#2a2a36")])
 
-        # Checkbutton
         style.configure("TCheckbutton", background=bg_dark, foreground=text_secondary,
                         font=self.small_font)
         style.map("TCheckbutton", foreground=[("selected", accent)])
 
-        # Scrollbars
         style.configure("Vertical.TScrollbar", background=card_bg, troughcolor=bg_dark,
                         borderwidth=0, arrowcolor=text_secondary)
 
-        # ---------- Main container with shadow effect (using frames with padding) ----------
+        # ---------- Main container ----------
         outer_shadow = tk.Frame(self, bg="#0a0a0f", highlightthickness=0)
         outer_shadow.pack(expand=True, fill="both", padx=20, pady=20)
-        # Inner card
+
         main_card = tk.Frame(outer_shadow, bg="#1e1e2a", relief="flat", bd=0)
         main_card.pack(expand=True, fill="both")
 
-        # Header area
+        # Header
         header = tk.Frame(main_card, bg="#1e1e2a", height=60)
         header.pack(fill="x", padx=20, pady=(15, 0))
         header.pack_propagate(False)
@@ -90,27 +83,23 @@ class WifiPasswordViewer(tk.Tk):
                             font=self.small_font, fg="#94a3b8", bg="#1e1e2a")
         subtitle.pack(side="left", padx=(15, 0))
 
-        # Separator line
         sep = tk.Frame(main_card, bg="#334155", height=1)
         sep.pack(fill="x", padx=20, pady=(10, 20))
 
-        # Two‑column layout (left / right)
         content = tk.Frame(main_card, bg="#1e1e2a")
         content.pack(expand=True, fill="both", padx=20, pady=(0, 20))
         content.columnconfigure(0, weight=1, uniform="cols")
         content.columnconfigure(1, weight=2, uniform="cols")
         content.rowconfigure(0, weight=1)
 
-        # ---------- LEFT PANEL (Wi‑Fi list) ----------
+        # ---------- LEFT PANEL ----------
         left_card = ttk.LabelFrame(content, text="📡 Redes disponibles", style="Card.TLabelframe", padding=10)
         left_card.grid(row=0, column=0, sticky="nsew", padx=(0, 15))
 
-        # Refresh button
         refresh_btn = ttk.Button(left_card, text="⟳ Refrescar", style="Accent.TButton",
                                  command=self.load_profiles)
         refresh_btn.pack(anchor="w", pady=(0, 10))
 
-        # Treeview container
         tree_frame = tk.Frame(left_card, bg="#1e1e2a")
         tree_frame.pack(fill="both", expand=True)
 
@@ -127,38 +116,38 @@ class WifiPasswordViewer(tk.Tk):
 
         self.tree.bind("<<TreeviewSelect>>", self.show_details)
 
-        # ---------- RIGHT PANEL (details) ----------
+        # ---------- RIGHT PANEL ----------
         right_card = ttk.LabelFrame(content, text="🔍 Información", style="Card.TLabelframe", padding=10)
         right_card.grid(row=0, column=1, sticky="nsew")
 
-        # Password row
         pw_frame = tk.Frame(right_card, bg="#1e1e2a")
         pw_frame.pack(fill="x", pady=(0, 15))
 
-        tk.Label(pw_frame, text="Contraseña:", font=self.heading_font, fg=text_primary, bg="#1e1e2a").pack(side="left",
-                                                                                                           padx=(0, 10))
+        tk.Label(pw_frame, text="Contraseña:", font=self.heading_font, fg=text_primary, bg="#1e1e2a").pack(side="left", padx=(0, 10))
 
         self.current_password = ""
         self.pw_var = tk.StringVar(value="")
         self.show_password = tk.BooleanVar(value=False)
 
-        # Custom styled Entry (readonly)
+        # Entry con estilos forzados para modo readonly
         self.pw_entry = tk.Entry(pw_frame, textvariable=self.pw_var, font=self.body_font,
-                                 state="readonly", relief="flat", bg="#2d2d3a", fg=text_primary,
-                                 insertbackground=accent, highlightthickness=1, highlightcolor=accent,
+                                 state="readonly", relief="flat",
+                                 disabledbackground="#2d2d3a",   # fondo cuando readonly
+                                 disabledforeground=text_primary,  # texto visible
+                                 highlightthickness=1, highlightcolor=accent,
                                  highlightbackground="#334155")
         self.pw_entry.pack(side="left", fill="x", expand=True, padx=(0, 10), ipady=5)
 
-        # Copy button
+        # Máscara inicial (ocultar contraseña)
+        self.pw_entry.configure(show="•")
+
         self.copy_btn = ttk.Button(pw_frame, text="📋 Copiar", style="Outline.TButton", command=self.copy_password)
         self.copy_btn.pack(side="left", padx=(0, 8))
 
-        # Show/Hide checkbox
         self.show_chk = ttk.Checkbutton(pw_frame, text="Mostrar", variable=self.show_password,
                                         command=self.update_password_display)
         self.show_chk.pack(side="left")
 
-        # Details text area
         details_frame = tk.Frame(right_card, bg="#1e1e2a")
         details_frame.pack(fill="both", expand=True)
 
@@ -196,11 +185,12 @@ class WifiPasswordViewer(tk.Tk):
 
     # ---------- Methods ----------
     def update_password_display(self):
-        """Toggle password visibility."""
+        """Alterna la máscara del campo contraseña según el Checkbutton."""
         if self.show_password.get():
             self.pw_entry.configure(show="")
         else:
             self.pw_entry.configure(show="•")
+        # Forzamos la actualización del texto (aunque la máscara ya lo maneja)
         self.pw_var.set(self.current_password)
 
     def copy_password(self):
@@ -249,6 +239,9 @@ class WifiPasswordViewer(tk.Tk):
         if not self.profiles:
             self.details_text.delete("1.0", tk.END)
             self.details_text.insert(tk.END, "⚠️ No se encontraron redes guardadas.")
+            self.current_password = ""
+            self.pw_var.set("")
+            self.copy_btn.state(["disabled"])
 
     def show_details(self, event):
         selection = self.tree.selection()
@@ -276,15 +269,18 @@ class WifiPasswordViewer(tk.Tk):
                     except Exception:
                         continue
 
+        # Actualizar contraseña
         if password:
             self.current_password = password
-            self.pw_var.set(password if self.show_password.get() else password)
             self.copy_btn.state(["!disabled"])
         else:
             self.current_password = ""
-            self.pw_var.set("")
             self.copy_btn.state(["disabled"])
 
+        # Aplicar máscara según el estado actual del checkbox
+        self.update_password_display()
+
+        # Mostrar detalles en el área de texto
         self.details_text.delete("1.0", tk.END)
         display_text = f"📶 Red: {ssid}\n\n"
         display_text += "─────────────────────────────\n"
