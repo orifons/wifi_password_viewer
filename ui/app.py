@@ -7,7 +7,7 @@ class WifiPasswordViewer(tk.Tk):
         super().__init__()
 
         self.title("Wi‑Fi Password Viewer")
-        self.geometry("950x650")
+        self.geometry("1130x650")
         self.minsize(850, 550)
         self.configure(bg="#0a0a0f")
 
