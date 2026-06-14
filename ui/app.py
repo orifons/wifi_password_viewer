@@ -123,7 +123,8 @@ class WifiPasswordViewer(tk.Tk):
         pw_frame = tk.Frame(right_card, bg="#1e1e2a")
         pw_frame.pack(fill="x", pady=(0, 15))
 
-        tk.Label(pw_frame, text="Contraseña:", font=self.heading_font, fg=text_primary, bg="#1e1e2a").pack(side="left", padx=(0, 10))
+        tk.Label(pw_frame, text="Contraseña:", font=self.heading_font, fg=text_primary, bg="#1e1e2a").pack(side="left",
+                                                                                                           padx=(0, 10))
 
         self.current_password = ""
         self.pw_var = tk.StringVar(value="")
@@ -132,7 +133,7 @@ class WifiPasswordViewer(tk.Tk):
         # Entry con estilos forzados para modo readonly
         self.pw_entry = tk.Entry(pw_frame, textvariable=self.pw_var, font=self.body_font,
                                  state="readonly", relief="flat",
-                                 disabledbackground="#2d2d3a",   # fondo cuando readonly
+                                 disabledbackground="#2d2d3a",  # fondo cuando readonly
                                  disabledforeground=text_primary,  # texto visible
                                  highlightthickness=1, highlightcolor=accent,
                                  highlightbackground="#334155")
