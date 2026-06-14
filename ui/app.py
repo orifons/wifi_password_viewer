@@ -290,8 +290,3 @@ class WifiPasswordViewer(tk.Tk):
         if not password:
             display_text += "🔑 Contraseña no encontrada (permisos o idioma del sistema)."
         self.details_text.insert(tk.END, display_text)
-
-
-if __name__ == "__main__":
-    app = WifiPasswordViewer()
-    app.mainloop()
